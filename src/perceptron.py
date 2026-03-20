@@ -2,56 +2,65 @@ import numpy as np
 
 
 class Perceptron:
-    def __init__(self, learning_rate=0.1) -> None:
-        """
-        Instanciar un nuevo Perceptron
-        :parametro learning_rate: coeficiente para ajustar la respuesta del modelo
-        a los datos de entrenamiento.
-        """
+    def __init__(self, learning_rate=0.1, random_state=None, max_iter=100) -> None:
         self.learning_rate = learning_rate
-        # self.n_iter = None
-        self._b = 0.0  # Intersección con el eje y
-        self._w: np.ndarray | None = None  # Pesos asignados a las caracteristicas de entrada
-        # Recuento de errores durante cada iteración
-        self.misclassified_samples = []
+        self.random_state = random_state
+        self.max_iter = max_iter
+        self._bias = 0.0
+        self._weights = None
+        self.miss_classified_examples = None
 
-    def f(self, x: np.ndarray) -> float:
+    def _f(self, x: np.ndarray) -> np.ndarray:
         """
-        Calcular la salidad de la neurona
-        :parametro x: caracteristicas de entrada
-        :retorna: la salida de la neurona
+        Element-wise step activation function.
+        :param x: Input features.
+        :return: A binary array where values greater than 0 are mapped to 1, otherwise 0.
         """
-        if self._w is None:
-            raise ValueError("El modelo no esta entrenado. Ejecuta fit antes de predecir.")
-        return np.dot(x, self._w) + self._b
+        return np.where(x > 0, 1, 0)
 
-    def predict(self, x: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray):
         """
-        Convertir la salida de la neurona en salidad binaria
-        :parametro x: caracteristicas de entrada
-        :retorna: 1 si la salida de la muestra es positiva (o cero), -1 en caso contrario
+        Fit the model to the training data.
+        :param X: Training data features, shape (n_samples, n_features).
+        :param y: Target labels, shape (n_samples,).
         """
-        return np.where(self.f(x) >= 0.0, 1, 0)
+        if len(X) != len(y):
+            raise ValueError("The number of samples and labels must be the same.")
 
-    def fit(self, x: np.ndarray, y: np.ndarray, n_iter=100):
-        """
-        Método fit - Ajustar el modelo de Perceptron en los datos de entrenamiento
+        classes = np.unique(y)
+        if len(classes) != 2:
+            raise ValueError("Binary classification is required. Found classes: {}".format(classes))
+        y_bin = np.where(y == classes[0], 0, 1)
 
-        :parametro x: muestras para ajustar el modelo
-        :parametro y: etiquetas de las muestras de entrenamiento
-        :parametro n_iter: número de iteraciones de entrenamiento
-        """
-        self._b = 0.0
-        self._w = np.zeros(x.shape[1])
-        self.misclassified_samples = []
+        rng = np.random.RandomState(self.random_state)
+        self._weights = rng.normal(loc=0.0, scale=0.01, size=X.shape[1])
+        self.miss_classified_examples = []
 
-        for _ in range(n_iter):
+        for _ in range(self.max_iter):
             errors = 0  # Errores durante la iteración
-            for xi, yi in zip(x, y):
-                # Para cada muestra calcular el valor de actualización
-                update = self.learning_rate * (yi - self.predict(xi))
-                # Aplicarlo a la interseccion con y y al arreglo de pesos
-                self._b += update
-                self._w += update * xi
-                errors += int(update != 0.0)
-            self.misclassified_samples.append(errors)
+            for x_i, y_i in zip(X, y_bin):
+                # For each training sample, calculate the linear output and apply the step function
+                linear_out = np.dot(x_i, self._weights) + self._bias
+                y_predicted = self._f(linear_out)
+
+                # Perceptron update
+                update = self.learning_rate * (y_i - y_predicted)
+                self._weights += update * x_i
+                self._bias += update
+
+                errors += int(update != 0)
+
+            self.miss_classified_examples.append(errors)
+
+    def predict(self, X: np.ndarray):
+        """
+        Predict class labels for samples in X.
+        :param X: Input features, shape (n_samples, n_features).
+        :return: Predicted class labels, shape (n_samples,).
+        """
+        if self._weights is None:
+            raise ValueError("The model has not been trained yet.")
+
+        linear_out = np.dot(X, self._weights) + self._bias
+        y_predicted = self._f(linear_out)
+        return y_predicted
