@@ -68,3 +68,28 @@ class Perceptron:
         linear_out = np.dot(X, self._weights) + self._bias
         y_predicted = self._f(linear_out)
         return y_predicted
+
+
+if __name__ == "__main__":
+    from sklearn.datasets import load_iris
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import accuracy_score
+
+    X, y = load_iris(return_X_y=True)
+    X = X[y != 2]
+    y = y[y != 2]
+    X = X[:, :2]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+    clf = Perceptron(learning_rate=0.1, max_iter=1000)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
+
+    print("=" * 60)
+    print("PERCEPTRON TRAINING RESULTS")
+    print("=" * 60)
+    print(f"Test Accuracy: {accuracy_score(y_test, y_pred):.4f}")
+    print(f"Epochs trained: {len(clf.errors_per_epoch)}")
+    print("\nErrors per epoch (evolution):")
+    print(clf.errors_per_epoch)
+    print("=" * 60)
