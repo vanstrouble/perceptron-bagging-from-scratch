@@ -3,11 +3,19 @@ import numpy as np
 
 class Perceptron:
     def __init__(self, learning_rate=0.1, random_state=None, max_iter=100) -> None:
+        """
+        Initialize a Perceptron classifier.
+
+        :param learning_rate: Step size used in the weight and bias update rule.
+        :param random_state: Seed for random weight initialization. If None,
+            initialization is non-deterministic.
+        :param max_iter: Maximum number of training epochs.
+        """
         self.learning_rate = learning_rate
         self.random_state = random_state
         self.max_iter = max_iter
         self._bias = 0.0
-        self._weights = None
+        self._weights: np.ndarray | None = None
         self.errors_per_epoch = []
 
     def _f(self, x: np.ndarray) -> np.ndarray:
@@ -17,6 +25,14 @@ class Perceptron:
         :return: A binary array where values greater than 0 are mapped to 1, otherwise 0.
         """
         return np.where(x > 0, 1, 0)
+
+    def _predict_binary(self, X: np.ndarray) -> np.ndarray:
+        """Compute binary predictions from input features using current weights and bias."""
+        if self._weights is None:
+            raise ValueError("Model weights are not initialized.")
+
+        linear_out = np.dot(X, self._weights) + self._bias
+        return self._f(linear_out)
 
     def fit(self, X: np.ndarray, y: np.ndarray):
         """
@@ -41,8 +57,7 @@ class Perceptron:
             errors = 0  # Errores durante la iteración
             for x_i, y_i in zip(X, y_bin):
                 # For each training sample, calculate the linear output and apply the step function
-                linear_out = np.dot(x_i, self._weights) + self._bias
-                y_predicted = self._f(linear_out)
+                y_predicted = self._predict_binary(x_i)
 
                 # Perceptron update
                 update = self.learning_rate * (y_i - y_predicted)
@@ -62,12 +77,7 @@ class Perceptron:
         :param X: Input features, shape (n_samples, n_features).
         :return: Predicted class labels, shape (n_samples,).
         """
-        if self._weights is None:
-            raise ValueError("The model has not been trained yet.")
-
-        linear_out = np.dot(X, self._weights) + self._bias
-        y_predicted = self._f(linear_out)
-        return y_predicted
+        return self._predict_binary(X)
 
 
 if __name__ == "__main__":
@@ -88,7 +98,7 @@ if __name__ == "__main__":
     print("=" * 60)
     print("PERCEPTRON TRAINING RESULTS")
     print("=" * 60)
-    print(f"Test Accuracy: {accuracy_score(y_test, y_pred):.4f}")
+    print(f"Test Accuracy: {accuracy_score(y_test, y_pred) * 100:.2f}%")
     print(f"Epochs trained: {len(clf.errors_per_epoch)}")
     print("\nErrors per epoch (evolution):")
     print(clf.errors_per_epoch)
