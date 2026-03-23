@@ -16,12 +16,13 @@ class Perceptron:
         self.max_iter = max_iter
         self._bias = 0.0
         self._weights: np.ndarray | None = None
+        self._classes: np.ndarray | None = None
         self.errors_per_epoch = []
 
     def _f(self, x: np.ndarray) -> np.ndarray:
         """
         Element-wise step activation function.
-        :param x: Input features.
+        :param x: Linear activation values (e.g., w dot x + b).
         :return: A binary array where values greater than 0 are mapped to 1, otherwise 0.
         """
         return np.where(x > 0, 1, 0)
@@ -46,6 +47,7 @@ class Perceptron:
         classes = np.unique(y)
         if len(classes) != 2:
             raise ValueError("Binary classification is required. Found classes: {}".format(classes))
+        self._classes = classes
         y_bin = np.where(y == classes[0], 0, 1)
 
         rng = np.random.RandomState(self.random_state)
@@ -77,7 +79,11 @@ class Perceptron:
         :param X: Input features, shape (n_samples, n_features).
         :return: Predicted class labels, shape (n_samples,).
         """
-        return self._predict_binary(X)
+        if self._classes is None:
+            raise ValueError("The model has not been trained yet.")
+
+        y_binary = self._predict_binary(X)
+        return self._classes[np.asarray(y_binary, dtype=int)]
 
 
 if __name__ == "__main__":
