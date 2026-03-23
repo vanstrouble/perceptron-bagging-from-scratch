@@ -1,0 +1,126 @@
+# -----------------------------
+# OS / file explorer metadata
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# Python bytecode and caches
+# -----------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Type checker / linter / test caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# -----------------------------
+# Build / packaging artifacts
+# -----------------------------
+build/
+dist/
+site/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+
+# -----------------------------
+# Virtual environments
+# -----------------------------
+.venv/
+venv/
+env/
+ENV/
+
+# -----------------------------
+# Jupyter / notebooks
+# -----------------------------
+.ipynb_checkpoints/
+
+# -----------------------------
+# IDE / editor settings
+# -----------------------------
+.vscode/
+.idea/
+*.iml
+
+# -----------------------------
+# Logs and runtime files
+# -----------------------------
+*.log
+logs/
+
+# -----------------------------
+# Environment / local config
+# -----------------------------
+.env
+.env.*
+!.env.example
+
+# -----------------------------
+# ML experiment tracking
+# -----------------------------
+mlruns/
+wandb/
+lightning_logs/
+runs/
+ray_results/
+
+# TensorBoard
+tensorboard/
+tb_logs/
+events.out.tfevents.*
+
+# -----------------------------
+# ML artifacts and checkpoints
+# -----------------------------
+checkpoints/
+artifacts/
+models/
+outputs/
+predictions/
+
+# Common model/data artifact extensions
+*.ckpt
+*.pt
+*.pth
+*.h5
+*.hdf5
+*.onnx
+*.joblib
+*.pkl
+*.pickle
+*.npy
+*.npz
+
+# -----------------------------
+# Data files and datasets
+# -----------------------------
+data/
+datasets/
+*.parquet
+*.feather
+
+# -----------------------------
+# DVC cache (keep metadata tracked)
+# -----------------------------
+.dvc/cache/
+
+# -----------------------------
+# Misc temporary files
+# -----------------------------
+*.tmp
+*.temp
+*.swp
+*~
