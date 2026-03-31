@@ -48,14 +48,54 @@ The `BaggingClassifier` class is a flexible, model-agnostic implementation of th
 *   **Ensemble Training:** It trains `n_estimators` independent models, one for each bootstrap sample.
 *   **Majority Vote:** For prediction, it collects the predictions from all estimators and determines the final class label by a majority vote. It includes a deterministic tie-breaking mechanism for robustness.
 
-## Project Usage
+## Setup and Installation
+
+To run this project, it is recommended to use a virtual environment to manage dependencies.
+
+**1. Clone the Repository**
+```bash
+git clone https://github.com/vanstrouble/perceptron-bagging-from-scratch.git
+cd perceptron
+```
+
+**2. Create and Activate a Virtual Environment**
+
+You can use any virtual environment manager. As this project was developed using Conda, those instructions are provided first.
+
+*   **Using `conda` / `miniconda` (Recommended):**
+    ```bash
+    # Create a new environment named 'perceptron'
+    conda create --name perceptron python=3.12
+
+    # Activate the new environment
+    conda activate perceptron
+    ```
+
+*   **Using `venv` (Python's built-in):**
+    ```bash
+    # Create a virtual environment in a folder named 'venv'
+    python3 -m venv venv
+
+    # Activate the environment
+    # On macOS/Linux:
+    source venv/bin/activate
+    # On Windows:
+    # .\venv\Scripts\activate
+    ```
+
+**3. Install Dependencies**
+
+Once your environment is activated, install the required packages from the `requirements.txt` file:
+```bash
+pip install -r requirements.txt
+```
+
+## Running the Comparison
 
 This repository includes a comparison script, `bagging_perceptron.py`, which demonstrates the power of bagging. It compares the performance of a single `Perceptron` against a `BaggingClassifier` using multiple perceptrons on various datasets from `scikit-learn`.
 
-To run the comparison, execute the following command from the root directory:
-
+With your environment still active, run the comparison script:
 ```bash
 python src/bagging_perceptron.py
 ```
-
 You will observe how the bagging ensemble often provides a significant accuracy boost, especially on more complex datasets where a single perceptron might struggle.
