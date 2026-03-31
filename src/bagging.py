@@ -83,6 +83,9 @@ class BaggingClassifier:
         if len(winners) == 1:
             return winners[0]
 
+        if self.classes_ is None:
+            raise ValueError("The ensemble has not been trained yet.")
+
         # Deterministic tie break: use the original class order from fit().
         for cls in self.classes_:
             if np.any(winners == cls):
